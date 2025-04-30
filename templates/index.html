@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>BahnIQ - A Deutsche Bahn Analytics app</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
+		<noscript><link rel="stylesheet" href="{{ url_for('static', filename='assets/css/noscript.css') }}" /></noscript>
+
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon/favicon-96x96.png') }}" sizes="96x96" />
+		<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon/favicon.svg') }}" />
+		<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" />
+		<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" />
+		<link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}" />
+
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<div id="hamburger-menu" class="hamburger">
+					<span></span>
+					<span></span>
+					<span></span>
+				  </div>
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<span class="logo"><img src="{{ url_for('static', filename='images/bullet-train-svgrepo-com.svg') }}" alt="" /></span>
+						<h1>BahnIQ</h1>
+						<p>Deutsche Bahn Analytics – Turning Rail Data into Real Insights<br />
+							Stats by <a href="https://www.linkedin.com/in/priya-dharshini-vaidhyanathan-a32bb2285/" target="_blank">Priya</a> 
+							& <a href="https://www.linkedin.com/in/subramanian-veerappan/" target="_blank">Subra</a>.</p>
+					</header>
+
+				<!-- Main -->
+					<h1 class="intro-q">Planning a journey? Want to arrive on time?</h1>
+					<div id="main">
+						<nav id="nav">
+							<form action="{{ url_for('stats') }}" method="GET">
+								<ul>
+									<li>
+										<select name="train" id="train">
+											<option value="">Select train</option>
+											{% for train in dropdown_data.train_names|sort() %}
+												<option value='{{train}}'>{{train}}</option>
+											{% endfor %}
+										</select>
+									</li>
+							
+									<!-- Dropdown 2 -->
+									<li>
+										<select name="boarding" id="boarding">
+											<option value="">Select boarding point</option>
+											{% for station in dropdown_data.stations|sort() %}
+												<option value='{{station}}'>{{station}}</option>
+											{% endfor %}
+										</select>
+									</li>
+						
+									<!-- Dropdown 3 -->
+									<li>
+										<select name="deboarding" id="deboarding">
+											<option value="">Select deboarding point</option>
+											{% for station in dropdown_data.stations|sort() %}
+												<option value='{{station}}'>{{station}}</option>
+											{% endfor %}
+										</select>
+									</li>
+
+									<li id="button">
+										<button type="submit" class="cssbuttons-io"><span>Let's check!</span></button>
+									</li>
+								</ul>
+							</form>
+						</nav>
+
+						<div id="main">
+
+							<!-- Introduction -->
+								<section id="intro" class="main">
+									<div class="spotlight">
+										<div class="content">
+											<header class="major">
+												<h2>Test chart</h2>
+											</header>
+											<p>Some description</p>
+										</div>
+										<div class="chart-container">
+											<div id='delay_chart_by_train_deboarding'><!-- Plotly chart will be drawn inside this DIV --></div>
+										</div>
+									</div>
+								</section>
+
+								<section id="intro" class="main">
+									<div class="spotlight">
+										<div class="content">
+											<header class="major">
+												<h2>Test chart</h2>
+											</header>
+											<p>Some description</p>
+										</div>
+										<div class="chart-container">
+											<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+										</div>
+									</div>
+								</section>
+						</div>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Statophobia</p>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+
+			<script type='text/javascript'>
+				var delay_chart = JSON.parse(`{{ delay_chart_json | safe }}`);
+				Plotly.plot("delay_chart_by_train_deboarding", delay_chart, {});
+			</script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.scrollex.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.scrolly.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/browser.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/breakpoints.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/util.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/dropdown.js') }}"></script>
+			<!-- <script src="{{ url_for('static', filename='assets/js/analysis.js') }}"></script> -->
+
+	</body>
+</html>
