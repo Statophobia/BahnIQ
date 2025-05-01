@@ -50,7 +50,9 @@
 										<select name="train" id="train">
 											<option value="">Select train</option>
 											{% for train in dropdown_data.train_names|sort() %}
-												<option value='{{train}}'>{{train}}</option>
+												<option value='{{train}}' {% if request_data and request_data.train_name == train %}selected{% endif %}>
+													{{train}}
+												</option>
 											{% endfor %}
 										</select>
 									</li>
@@ -60,7 +62,9 @@
 										<select name="boarding" id="boarding">
 											<option value="">Select boarding point</option>
 											{% for station in dropdown_data.stations|sort() %}
-												<option value='{{station}}'>{{station}}</option>
+												<option value='{{station}}' {% if request_data and request_data.boarding_point == station %}selected{% endif %}>
+													{{station}}
+												</option>
 											{% endfor %}
 										</select>
 									</li>
@@ -70,7 +74,9 @@
 										<select name="deboarding" id="deboarding">
 											<option value="">Select deboarding point</option>
 											{% for station in dropdown_data.stations|sort() %}
-												<option value='{{station}}'>{{station}}</option>
+												<option value='{{station}}' {% if request_data and request_data.deboarding_point == station %}selected{% endif %}>
+													{{station}}
+												</option>
 											{% endfor %}
 										</select>
 									</li>
@@ -79,40 +85,45 @@
 										<button type="submit" class="cssbuttons-io"><span>Let's check!</span></button>
 									</li>
 								</ul>
+								{% if message.error_message %}
+									<p class="error">{{message.error_message}}</p>
+								{% endif %}
 							</form>
 						</nav>
 
-						<div id="main">
+						{% if not message.error_message and request_data is defined %}
+							<div id="main">
 
-							<!-- Introduction -->
-								<section id="intro" class="main">
-									<div class="spotlight">
-										<div class="content">
-											<header class="major">
-												<h2>Test chart</h2>
-											</header>
-											<p>Some description</p>
+								<!-- Introduction -->
+									<section id="intro" class="main">
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Test chart</h2>
+												</header>
+												<p>Some description</p>
+											</div>
+											<div class="chart-container">
+												<div id='delay_chart_by_train_deboarding'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
 										</div>
-										<div class="chart-container">
-											<div id='delay_chart_by_train_deboarding'><!-- Plotly chart will be drawn inside this DIV --></div>
-										</div>
-									</div>
-								</section>
+									</section>
 
-								<section id="intro" class="main">
-									<div class="spotlight">
-										<div class="content">
-											<header class="major">
-												<h2>Test chart</h2>
-											</header>
-											<p>Some description</p>
+									<section id="intro" class="main">
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Test chart</h2>
+												</header>
+												<p>Some description</p>
+											</div>
+											<div class="chart-container">
+												<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
 										</div>
-										<div class="chart-container">
-											<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
-										</div>
-									</div>
-								</section>
-						</div>
+									</section>
+							</div>
+						{% endif %}
 
 					</div>
 

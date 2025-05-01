@@ -15,7 +15,9 @@ function create_custom_dropdowns() {
 
     // Attach search box to each dropdown individually
     $('.dropdown-select .list ul').each(function (i) {
-        $(this).before('<div class="dd-search"><input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search..."></div>');
+        if ($(this).prev('.dd-search').length === 0) {
+            $(this).before('<div class="dd-search"><input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search..."></div>');
+        }
     });
 }
 
@@ -99,4 +101,59 @@ $(document).on('keydown', '.dropdown-select', function (event) {
 
 $(document).ready(function () {
     create_custom_dropdowns();
+});
+
+$(document).ready(function () {
+    function updateDropdown(url, requestType, selectedValue, targetDropdownIds) {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                drop_down_data_request_type: requestType,
+                current_dropdown_selection: selectedValue
+            }),
+            success: function (data) {
+                targetDropdownIds.forEach(function (dropdownId) {
+                    const selectEl = $('#' + dropdownId);
+                    const previousValue = selectEl.val();  // store current selection
+                    const newOptions = data.dropdown_data;
+            
+                    // Clear and repopulate
+                    selectEl.empty().append('<option value="">Select</option>');
+                    newOptions.forEach(function (val) {
+                        selectEl.append(`<option value="${val}">${val}</option>`);
+                    });
+            
+                    // Restore previous value if it's still valid
+                    if (previousValue && newOptions.includes(previousValue)) {
+                        selectEl.val(previousValue);
+                    }
+            
+                    // Refresh custom dropdown (if any)
+                    selectEl.next('.dropdown-select').remove();
+                    create_custom_dropdowns();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Dropdown update error:", error);
+            }
+        });
+    }
+    
+    // Train → Boarding & Deboarding
+    $('#train').on('change', function () {
+        const selectedTrain = $(this).val();
+        if (selectedTrain) {
+            updateDropdown('/get_dropdown_data', 'station', selectedTrain, ['boarding', 'deboarding']);
+        }
+    });
+    
+    // Boarding or Deboarding → Train
+    $('#boarding, #deboarding').on('change', function () {
+        const selectedStation = $(this).val();
+        if (selectedStation) {
+            updateDropdown('/get_dropdown_data', 'train', selectedStation, ['train']);
+        }
+    });
 });
