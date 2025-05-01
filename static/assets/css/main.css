@@ -3398,6 +3398,11 @@ input, select, textarea {
 		#nav.open {
 			display: block;
 		}
+
+		.mobile-screen {
+			display: block;
+			margin-top: 10%;
+		}
 		}
 		
 		/* Show menu by default on desktop */
@@ -3405,12 +3410,17 @@ input, select, textarea {
 		#hamburger-menu {
 			display: none; /* Hide hamburger icon on desktop */
 		}
-		
+
 		#nav {
 			display: block;
 			position: absolute;
 		}
+
+		.mobile-screen {
+			display: none;
 		}
+		}
+		
 
 /* Main */
 

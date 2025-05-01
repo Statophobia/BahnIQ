@@ -43,6 +43,7 @@
 					</h1>
 					
 					<div id="main">
+						<p class="mobile-screen">Please use the ≡ icon on the top left to make your selection</p>
 						<nav id="nav">
 							<form action="{{ url_for('stats') }}" method="GET">
 								<ul>
@@ -136,10 +137,12 @@
 
 		<!-- Scripts -->
 
-			<script type='text/javascript'>
-				var delay_chart = JSON.parse(`{{ delay_chart_json | safe }}`);
-				Plotly.plot("delay_chart_by_train_deboarding", delay_chart, {});
-			</script>
+			{% if delay_chart_json %}
+				<script type='text/javascript'>
+					var delay_chart = JSON.parse(`{{ delay_chart_json | safe }}`);
+					Plotly.plot("delay_chart_by_train_deboarding", delay_chart, {});
+				</script>
+			{% endif %}
 			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
 			<script src="{{ url_for('static', filename='assets/js/jquery.scrollex.min.js') }}"></script>
 			<script src="{{ url_for('static', filename='assets/js/jquery.scrolly.min.js') }}"></script>
