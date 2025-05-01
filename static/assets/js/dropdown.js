@@ -118,9 +118,17 @@ $(document).ready(function () {
                     const selectEl = $('#' + dropdownId);
                     const previousValue = selectEl.val();  // store current selection
                     const newOptions = data.dropdown_data;
+
+                    // Define placeholder text
+                    let placeholderText = 'Select';
+                    if (dropdownId === 'boarding') {
+                        placeholderText = 'Select boarding point';
+                    } else if (dropdownId === 'deboarding') {
+                        placeholderText = 'Select deboarding point';
+                    }
             
                     // Clear and repopulate
-                    selectEl.empty().append('<option value="">Select</option>');
+                    selectEl.empty().append(`<option value="">${placeholderText}</option>`);
                     newOptions.forEach(function (val) {
                         selectEl.append(`<option value="${val}">${val}</option>`);
                     });

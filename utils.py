@@ -12,8 +12,24 @@ def get_data():
     return data_df, stations, train_names
 
 def check_route_validity(data_df, train_name, boarding, deboarding):
-    df = data_df[data_df['train_name'] == train_name].sort_values(by='time')
-    stations = df['station'].drop_duplicates().tolist()
+    df = data_df[data_df["train_name"] == train_name].copy()
+
+    if "train_line_ride_id" not in df.columns:
+        print("Missing 'train_line_ride_id' column.")
+        return False
+
+    # Find the most common ride ID for this train
+    most_common_ride_id = (
+        df["train_line_ride_id"]
+        .dropna()
+        .value_counts()
+        .idxmax()
+    )
+
+    # Filter data to just this ride
+    ride_df = df[df["train_line_ride_id"] == most_common_ride_id]
+    stations = ride_df.sort_values(by="train_line_station_num")["station"].drop_duplicates().tolist()
+
     try:
         b_index = stations.index(boarding)
         d_index = stations.index(deboarding)
@@ -43,10 +59,11 @@ def get_train_punctuality(data_df, request_data):
 
     # Find the minimum and maximum weeks
     min_week = filtered_df['week_start'].min()
-    max_week = filtered_df['week_start'].max()
 
     # Optionally: Find the first date in the DataFrame
     first_date = filtered_df['time'].min().date()
+
+    print(filtered_df['week_start'].max(), min_week, first_date)
 
     # Exclude the first week if it's incomplete
     # Check if the first date is later than the start of the week

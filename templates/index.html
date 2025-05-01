@@ -1,9 +1,5 @@
 <!DOCTYPE HTML>
-<!--
-	Stellar by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+
 <html>
 	<head>
 		<title>BahnIQ - A Deutsche Bahn Analytics app</title>
@@ -41,7 +37,11 @@
 					</header>
 
 				<!-- Main -->
-					<h1 class="intro-q">Planning a journey? Want to arrive on time?</h1>
+					<h1 class="intro-q">
+						Planning a journey? Want to arrive on time?
+						<br><span style="font-size: x-large;">Check train performance by route</span>
+					</h1>
+					
 					<div id="main">
 						<nav id="nav">
 							<form action="{{ url_for('stats') }}" method="GET">

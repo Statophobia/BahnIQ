@@ -9,5 +9,5 @@ dependencies = [
     'pandas',
     'pyarrow', 
     'plotly', 
-    'altair'
+    'gunicorn'
 ]

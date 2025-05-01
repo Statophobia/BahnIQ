@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for, redirect
 
 from utils import get_data, get_train_punctuality
 
+import subprocess
+
 app = Flask(__name__)
+
+data_df, stations, train_names = get_data()
 
 @app.route('/')
 def index():
@@ -13,13 +17,16 @@ def index():
         message=None
     )
 
-@app.route('/stats', methods=['GET'])
+@app.route('/stats', methods=['GET'], strict_slashes=False)
 def stats():
     request_data = {
-        'train_name': request.args['train'],
-        'boarding_point': request.args['boarding'],
-        'deboarding_point': request.args['deboarding']
+        'train_name': request.args.get('train'),
+        'boarding_point': request.args.get('boarding'),
+        'deboarding_point': request.args.get('deboarding')
     }
+
+    if not any(request_data.values()):
+        return redirect(url_for('index'))
 
     dropdown_data = {'stations':stations, 'train_names':train_names}
     
@@ -66,6 +73,11 @@ def get_dropdown_data():
 
     return jsonify({'dropdown_data': filtered_data})
 
+
+@app.route("/refresh")
+def refresh_data():
+    subprocess.run(["bash", "download_data.sh"])
+    return "Data refreshed", 200
+
 if __name__ == "__main__":
-    data_df, stations, train_names = get_data()
     app.run()
