@@ -1,8 +1,10 @@
 import pandas as pd
 import json
-
+from datetime import datetime, timedelta
 import plotly
 import plotly.graph_objs as go
+import numpy as np
+import math
 
 def get_data():
     data_df = pd.read_parquet('data/recent_data.parquet')
@@ -87,20 +89,55 @@ def get_delay_by_week_chart(data_df, request_data):
     return graph_json
 
 def get_short_and_long_term_delay_value(data_df, request_data):
+    filtered_df = data_df[
+        (data_df.train_name == request_data['train_name']) & 
+        (data_df.station == request_data['deboarding_point'])
+    ].copy()
+    today = pd.Timestamp.today()
+    date_three_months_ago = today - pd.DateOffset(months=3)
+    date_two_weeks_ago = today - timedelta(weeks=2)
+    df_3_months_filtered = filtered_df[filtered_df['time'] >= date_three_months_ago]
+    df_2_weeks_filtered = filtered_df[filtered_df['time'] >= date_two_weeks_ago]
+
+    avg_delay_3_months = df_3_months_filtered['delay_in_min'].mean()
+    avg_delay_2_weeks = df_2_weeks_filtered['delay_in_min'].mean()
+    avg_delay_3_months = round(avg_delay_3_months) if not math.isnan(avg_delay_3_months) else float('nan')
+    avg_delay_2_weeks = round(avg_delay_2_weeks) if not math.isnan(avg_delay_2_weeks) else float('nan')
     delay = {
-        'short_term_delay': 5,
-        'long_term_delay': 10
+        'short_term_delay': avg_delay_2_weeks,
+        'long_term_delay': avg_delay_3_months
     }
+
     return delay
 
 def get_punctuality_chart(data_df, request_data):
-
-    labels = ['Oxygen','Hydrogen','Carbon_Dioxide','Nitrogen']
-    values = [4500, 2500, 1053, 500]
-
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
-
+    filtered_df = data_df[
+        (data_df['train_name'] == request_data['train_name']) & 
+        (data_df['station'] == request_data['deboarding_point'])
+    ].copy()
+    end_date = pd.to_datetime('today')
+    start_date = end_date - timedelta(days=30)
+    df_recent = filtered_df[
+        (filtered_df['time'] >= start_date) & 
+        (filtered_df['time'] <= end_date)
+    ].copy()
+    df_recent['delay_status'] = df_recent['delay_in_min'].apply(lambda x: 'On time' if x < 6 else 'Delay')
+    counts = df_recent['delay_status'].value_counts()
+    total = counts.sum()
+    delay_percentage = round((counts.get('Delay', 0) / total) * 100)
+    on_time_percentage = round((counts.get('On time', 0) / total) * 100)
+    labels = counts.index.tolist()
+    values = counts.values.tolist()
+    colors = ['blue', 'orange']
+    fig = go.Figure(data=[go.Pie(
+        labels=labels,
+        values=values,
+        hole=0.3,
+        marker=dict(colors=colors)
+    )])
+    fig.update_layout(title_text='Percentage of Train On Time in the Last 2 Weeks')
+    
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
-    return graph_json
+    return on_time_percentage, graph_json
     

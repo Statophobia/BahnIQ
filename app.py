@@ -51,7 +51,7 @@ def stats():
 
     delay_by_week_chart_json = get_delay_by_week_chart(data_df, request_data)
     short_and_long_term_delay_value = get_short_and_long_term_delay_value(data_df, request_data)
-    punctuality_chart_json = get_punctuality_chart(data_df, request_data)
+    on_time_percentage, punctuality_chart_json = get_punctuality_chart(data_df, request_data)
 
     return render_template(
         'index.html', 
@@ -59,6 +59,7 @@ def stats():
         delay_by_week_chart_json=delay_by_week_chart_json,
         short_and_long_term_delay_value=short_and_long_term_delay_value,
         punctuality_chart_json=punctuality_chart_json,
+        on_time_percentage=on_time_percentage,
         request_data=request_data, 
         message=None
     )
