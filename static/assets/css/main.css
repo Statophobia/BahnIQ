@@ -4146,3 +4146,11 @@ nav li#button {
 	color: red;
 	font-weight: bold;
 }
+
+#summary h2 {
+	text-align: center;
+} 
+
+#summary h2:after {
+	margin: 0.7em auto 1em auto;
+}
