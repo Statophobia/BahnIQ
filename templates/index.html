@@ -96,30 +96,44 @@
 							<div id="main">
 
 								<!-- Introduction -->
-									<section id="intro" class="main">
+								 	<section id="summary" class="main">
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
-													<h2>Test chart</h2>
+													<h2>Summary</h2>
 												</header>
 												<p>Some description</p>
-											</div>
-											<div class="chart-container">
-												<div id='delay_chart_by_train_deboarding'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
 									</section>
 
-									<section id="intro" class="main">
+									<section id="train-analytics" class="main">
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
 													<h2>Test chart</h2>
 												</header>
+												<p>
+													Some description
+													{{short_and_long_term_delay_value.short_term_delay}}
+													{{short_and_long_term_delay_value.long_term_delay}}
+												</p>
+											</div>
+											<div class="chart-container">
+												<div id='delay_by_week_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
+	
+										</div>
+
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Punctuality chart</h2>
+												</header>
 												<p>Some description</p>
 											</div>
 											<div class="chart-container">
-												<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+												<div id='punctuality_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
 									</section>
@@ -137,10 +151,13 @@
 
 		<!-- Scripts -->
 
-			{% if delay_chart_json %}
+			{% if delay_by_week_chart_json %}
 				<script type='text/javascript'>
-					var delay_chart = JSON.parse(`{{ delay_chart_json | safe }}`);
-					Plotly.plot("delay_chart_by_train_deboarding", delay_chart, {});
+					var delay_by_week_chart = JSON.parse(`{{ delay_by_week_chart_json | safe }}`);
+					Plotly.plot("delay_by_week_chart", delay_by_week_chart, {});
+
+					var punctuality_chart = JSON.parse(`{{ punctuality_chart_json | safe }}`);
+					Plotly.plot("punctuality_chart", punctuality_chart, {});
 				</script>
 			{% endif %}
 			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>

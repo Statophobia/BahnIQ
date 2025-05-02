@@ -37,17 +37,11 @@ def check_route_validity(data_df, train_name, boarding, deboarding):
     except ValueError:
         return False
 
-def get_train_punctuality(data_df, request_data):
+def get_delay_by_week_chart(data_df, request_data):
 
     train_name = request_data['train_name']
     boarding = request_data['boarding_point']
     deboarding = request_data['deboarding_point']
-
-    is_valid_route = True
-
-    if not check_route_validity(data_df, train_name, boarding, deboarding):
-        is_valid_route = False
-        return is_valid_route, {'error_message': 'Invalid station order for this train'}
 
     filtered_df = data_df[
         (data_df.train_name == train_name) & 
@@ -90,4 +84,23 @@ def get_train_punctuality(data_df, request_data):
     # Serialize to JSON for Plotly.js
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
-    return is_valid_route, graph_json
+    return graph_json
+
+def get_short_and_long_term_delay_value(data_df, request_data):
+    delay = {
+        'short_term_delay': 5,
+        'long_term_delay': 10
+    }
+    return delay
+
+def get_punctuality_chart(data_df, request_data):
+
+    labels = ['Oxygen','Hydrogen','Carbon_Dioxide','Nitrogen']
+    values = [4500, 2500, 1053, 500]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    return graph_json
+    

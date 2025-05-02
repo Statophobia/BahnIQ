@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 
-from utils import get_data, get_train_punctuality
+from utils import get_data, get_delay_by_week_chart, check_route_validity, \
+    get_short_and_long_term_delay_value, get_punctuality_chart
 
 import subprocess
 
@@ -38,24 +39,26 @@ def stats():
             request_data=request_data, 
             message=message
         )
-
-    is_valid_route, message_delay_chart_json = get_train_punctuality(data_df, request_data)
-
-    if not is_valid_route:
-        message = message_delay_chart_json
+    
+    if not check_route_validity(data_df, request_data['train_name'], request_data['boarding_point'], request_data['deboarding_point']):
+        message = {'error_message': 'Invalid station order for this train'}
         return render_template(
             'index.html', 
             dropdown_data=dropdown_data, 
             request_data=request_data, 
             message=message
-        )
-    
-    delay_chart_json = message_delay_chart_json
+        ) 
+
+    delay_by_week_chart_json = get_delay_by_week_chart(data_df, request_data)
+    short_and_long_term_delay_value = get_short_and_long_term_delay_value(data_df, request_data)
+    punctuality_chart_json = get_punctuality_chart(data_df, request_data)
 
     return render_template(
         'index.html', 
         dropdown_data=dropdown_data, 
-        delay_chart_json=delay_chart_json, 
+        delay_by_week_chart_json=delay_by_week_chart_json,
+        short_and_long_term_delay_value=short_and_long_term_delay_value,
+        punctuality_chart_json=punctuality_chart_json,
         request_data=request_data, 
         message=None
     )
