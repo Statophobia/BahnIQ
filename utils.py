@@ -81,7 +81,11 @@ def get_delay_by_week_chart(data_df, request_data):
         mode='lines+markers',
         name='Avg Delay'
     ))
-    fig.update_layout(title='Average Delay by Week', xaxis_title='Week Start', yaxis_title='Avg Delay (min)')
+    fig.update_layout(
+        title='Average Delay by Week', xaxis_title='Week Start', yaxis_title='Avg Delay (min)',
+        autosize=True,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
 
     # Serialize to JSON for Plotly.js
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -115,16 +119,14 @@ def get_punctuality_chart(data_df, request_data):
         (data_df['train_name'] == request_data['train_name']) & 
         (data_df['station'] == request_data['deboarding_point'])
     ].copy()
-    end_date = pd.to_datetime('today')
-    start_date = end_date - timedelta(days=30)
+    today = pd.to_datetime('today')
+    start_date = today - timedelta(days=30)
     df_recent = filtered_df[
-        (filtered_df['time'] >= start_date) & 
-        (filtered_df['time'] <= end_date)
+        (filtered_df['time'] >= start_date)
     ].copy()
     df_recent['delay_status'] = df_recent['delay_in_min'].apply(lambda x: 'On time' if x < 6 else 'Delay')
     counts = df_recent['delay_status'].value_counts()
     total = counts.sum()
-    delay_percentage = round((counts.get('Delay', 0) / total) * 100)
     on_time_percentage = round((counts.get('On time', 0) / total) * 100)
     labels = counts.index.tolist()
     values = counts.values.tolist()
@@ -135,7 +137,11 @@ def get_punctuality_chart(data_df, request_data):
         hole=0.3,
         marker=dict(colors=colors)
     )])
-    fig.update_layout(title_text='Percentage of Train On Time in the Last 2 Weeks')
+    fig.update_layout(
+        title_text='Percentage of Train On Time in the Last 2 Weeks', 
+        autosize=True,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
     
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
