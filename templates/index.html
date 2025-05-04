@@ -5,6 +5,15 @@
 		<title>BahnIQ - A Deutsche Bahn Analytics app</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+		<meta name="description" content="BahnIQ analyzes Deutsche Bahn train delays and punctuality across routes. Find out how late your train is likely to be using historical data." />
+		<meta name="keywords" content="Deutsche Bahn delay, Bahn delay, train analytics, DB punctuality, German train on-time stats, BahnIQ" />
+		<meta name="author" content="Statophobia" />
+		<meta name="robots" content="index, follow" />
+
+		<!-- Canonical URL -->
+		<link rel="canonical" href="https://bahniq.subra.me/" />
+
 		<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}" />
 		<noscript><link rel="stylesheet" href="{{ url_for('static', filename='assets/css/noscript.css') }}" /></noscript>
 
@@ -100,12 +109,17 @@
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
-													<h2>Summary</h2>
+													<h2>TL;DR</h2>
 												</header>
-												<p>The average delay of {{request_data.train_name}} to {{request_data.deboarding_point}} over the past three months is {{short_and_long_term_delay_value.long_term_delay}} minutes.
-													In the last two weeks, there is {{short_and_long_term_delay_value.short_term_delay}} delay.
-													However, based on the data, {{request_data.train_name}} was on time for {{on_time_percentage}}% of its journeys.
-													</p>
+												<ul>
+													<li>The average delay of {{request_data.train_name}} to {{request_data.deboarding_point}} over the past three months is <b>{{short_and_long_term_delay_value.long_term_delay}} minutes</b>.</li>
+													{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
+														<li>
+															In the last two weeks, there is {{short_and_long_term_delay_value.short_term_delay}} delay.
+														</li>
+													{% endif %}
+													<li>{{request_data.train_name}} was <b></b>on time for {{on_time_percentage}}%</b> of its journeys.</li>
+												</ul>
 											</div>
 										</div>
 									</section>
@@ -114,7 +128,7 @@
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
-													<h2>Punctuality Overview for {{request_data.train_name}}</h2>
+													<h2>Delay time: {{request_data.train_name}}</h2>
 												</header>
 												<p>
 													The average delay of {{ request_data.train_name }} to 
@@ -134,7 +148,7 @@
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
-													<h2>Punctuality chart for {{request_data.train_name}}</h2>
+													<h2>Punctuality rate: {{request_data.train_name}}</h2>
 												</header>
 												<p>This shows that {{request_data.train_name}} was on time by {{on_time_percentage}}% over the last two weeks.</p>
 											</div>
@@ -160,10 +174,10 @@
 			{% if delay_by_week_chart_json %}
 				<script type='text/javascript'>
 					var delay_by_week_chart = JSON.parse(`{{ delay_by_week_chart_json | safe }}`);
-					Plotly.plot("delay_by_week_chart", delay_by_week_chart, {});
+					Plotly.newPlot("delay_by_week_chart", delay_by_week_chart.data, delay_by_week_chart.layout, { responsive: true });
 
 					var punctuality_chart = JSON.parse(`{{ punctuality_chart_json | safe }}`);
-					Plotly.plot("punctuality_chart", punctuality_chart, {});
+					Plotly.newPlot("punctuality_chart", punctuality_chart.data, punctuality_chart.layout, { responsive: true });
 				</script>
 			{% endif %}
 			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>

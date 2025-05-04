@@ -81,7 +81,11 @@ def get_delay_by_week_chart(data_df, request_data):
         mode='lines+markers',
         name='Avg Delay'
     ))
-    fig.update_layout(title='Average Delay by Week', xaxis_title='Week Start', yaxis_title='Avg Delay (min)')
+    fig.update_layout(
+        title='Average Delay by Week', xaxis_title='Week Start', yaxis_title='Avg Delay (min)',
+        autosize=True,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
 
     # Serialize to JSON for Plotly.js
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -118,13 +122,11 @@ def get_punctuality_chart(data_df, request_data):
     end_date = pd.to_datetime('today')
     start_date = end_date -  pd.DateOffset(months=3)
     df_recent = filtered_df[
-        (filtered_df['time'] >= start_date) & 
-        (filtered_df['time'] <= end_date)
+        (filtered_df['time'] >= start_date)
     ].copy()
     df_recent['delay_status'] = df_recent['delay_in_min'].apply(lambda x: 'On time' if x < 6 else 'Delay')
     counts = df_recent['delay_status'].value_counts()
     total = counts.sum()
-    delay_percentage = round((counts.get('Delay', 0) / total) * 100)
     on_time_percentage = round((counts.get('On time', 0) / total) * 100)
     labels = counts.index.tolist()
     values = counts.values.tolist()
@@ -135,7 +137,11 @@ def get_punctuality_chart(data_df, request_data):
         hole=0.3,
         marker=dict(colors=colors)
     )])
-    fig.update_layout(title_text='Percentage of Train On Time in the Last 3 months')
+    fig.update_layout(
+        title_text='Percentage of Train On Time in the Last 3 months', 
+        autosize=True,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
     
 
 def get_delay_by_hour(data_df, request_data):
@@ -165,7 +171,10 @@ def get_delay_by_hour(data_df, request_data):
         xaxis=dict(tickmode='linear'),
         bargap=0.2
     )
-    fig.update_layout(title_text='Percentage of Trains On Time in the Last 2 Weeks')
+    fig.update_layout(title_text='Percentage of Trains On Time in the Last 2 Weeks', 
+        autosize=True,
+        margin=dict(l=20, r=20, t=40, b=40)
+    )
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
