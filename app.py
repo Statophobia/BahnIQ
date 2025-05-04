@@ -52,7 +52,9 @@ def stats():
     delay_by_week_chart_json = get_delay_by_week_chart(data_df, request_data)
     short_and_long_term_delay_value = get_short_and_long_term_delay_value(data_df, request_data)
     on_time_percentage, punctuality_chart_json = get_punctuality_chart(data_df, request_data)
-    delay_by_hour_json = get_delay_by_hour(data_df, request_data)
+    max_category, max_value,delay_by_hour_chart_json = get_delay_by_hour(data_df, request_data)
+
+    
 
     return render_template(
         'index.html', 
@@ -61,7 +63,9 @@ def stats():
         short_and_long_term_delay_value=short_and_long_term_delay_value,
         punctuality_chart_json=punctuality_chart_json,
         on_time_percentage=on_time_percentage,
-        delay_by_hour_json=delay_by_hour_json,
+        delay_by_hour_chart_json=delay_by_hour_chart_json,
+        max_category=max_category,
+        max_value=max_value,
         request_data=request_data, 
         message=None
     )

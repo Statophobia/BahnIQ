@@ -142,41 +142,59 @@ def get_punctuality_chart(data_df, request_data):
         autosize=True,
         margin=dict(l=20, r=20, t=40, b=40)
     )
-    
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return on_time_percentage, graph_json  
+
 
 def get_delay_by_hour(data_df, request_data):
     filtered_df = data_df[
-        (data_df.train_name == request_data['train_name']) & 
-        (data_df.station == request_data['deboarding_point'])
+    (data_df.station == request_data['deboarding_point'])
     ].copy()
-    data_df['hour'] = data_df['time'].dt.hour
-    delay_by_hour = data_df.groupby('hour')['delay_in_min'].mean()
-    delays = np.array(delay_by_hour.values)
-    fig = go.Figure(data=[
+    
+    filtered_df['hour'] = filtered_df['time'].dt.hour
+
+    bins = [0, 3, 7, 11, 15, 19, 24]
+    labels = ['Mid Night', 'Early Morning', 'Morning', 'Afternoon', 'Evening', 'Night']
+
+    filtered_df['time_category'] = pd.cut(
+        filtered_df['hour'],
+        bins=bins,
+        labels=labels,
+        right=True,
+        include_lowest=True
+    )
+    delay_by_category = filtered_df.groupby('time_category')['delay_in_min'].mean()
+    max_category = delay_by_category.idxmax()
+    max_value = int(round(delay_by_category.max(), 0))
+    fig = go.Figure(data=[ 
         go.Bar(
-            x=delay_by_hour.index,
-            y=delays,
+            x=bins[:-1],  # Using the bin values as x (e.g., 0, 3, 7, 11, 15, 19)
+            y=delay_by_category.values.tolist(),
             marker=dict(
-                color=delays,
-                colorscale='Reds',  
-                colorbar=dict(title='Average Delay ')
+                color=delay_by_category.values.tolist(),
+                colorscale=[[0, 'lightcoral'], [1, 'darkred']],
+                colorbar=dict(title='Average Delay')
             ),
             textposition='outside'
         )
     ])
+
     fig.update_layout(
-        title='Average Train Delay by Hour of Day ',
+        title='Average Train Delay by Time of Day',
         xaxis_title='Hour of Day',
-        yaxis_title='Average Delay ',
-        xaxis=dict(tickmode='linear'),
-        bargap=0.2
-    )
-    fig.update_layout(title_text='Percentage of Trains On Time in the Last 2 Weeks', 
+        yaxis_title='Average Delay (minutes)',
+        xaxis=dict(
+            tickmode='array',
+            tickvals=bins[:-1],  # Using the bin values for ticks (e.g., 0, 3, 7, 11, 15, 19)
+            ticktext=[str(x) for x in bins[:-1]],  # Use the bin values as tick labels
+            tickangle=0
+        ),
+        bargap=0.2,
         autosize=True,
         margin=dict(l=20, r=20, t=40, b=40)
     )
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
-    return graph_json
-    
+
+    return max_category, max_value, graph_json
