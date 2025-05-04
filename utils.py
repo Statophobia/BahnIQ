@@ -116,7 +116,7 @@ def get_punctuality_chart(data_df, request_data):
         (data_df['station'] == request_data['deboarding_point'])
     ].copy()
     end_date = pd.to_datetime('today')
-    start_date = end_date - timedelta(days=30)
+    start_date = end_date -  pd.DateOffset(months=3)
     df_recent = filtered_df[
         (filtered_df['time'] >= start_date) & 
         (filtered_df['time'] <= end_date)
@@ -135,9 +135,39 @@ def get_punctuality_chart(data_df, request_data):
         hole=0.3,
         marker=dict(colors=colors)
     )])
-    fig.update_layout(title_text='Percentage of Train On Time in the Last 2 Weeks')
+    fig.update_layout(title_text='Percentage of Train On Time in the Last 3 months')
     
+
+def get_delay_by_hour(data_df, request_data):
+    filtered_df = data_df[
+        (data_df.train_name == request_data['train_name']) & 
+        (data_df.station == request_data['deboarding_point'])
+    ].copy()
+    data_df['hour'] = data_df['time'].dt.hour
+    delay_by_hour = data_df.groupby('hour')['delay_in_min'].mean()
+    delays = np.array(delay_by_hour.values)
+    fig = go.Figure(data=[
+        go.Bar(
+            x=delay_by_hour.index,
+            y=delays,
+            marker=dict(
+                color=delays,
+                colorscale='Reds',  
+                colorbar=dict(title='Average Delay ')
+            ),
+            textposition='outside'
+        )
+    ])
+    fig.update_layout(
+        title='Average Train Delay by Hour of Day ',
+        xaxis_title='Hour of Day',
+        yaxis_title='Average Delay ',
+        xaxis=dict(tickmode='linear'),
+        bargap=0.2
+    )
+    fig.update_layout(title_text='Percentage of Trains On Time in the Last 2 Weeks')
+
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
-    return on_time_percentage, graph_json
+    return graph_json
     
