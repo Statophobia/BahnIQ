@@ -165,7 +165,7 @@ def get_delay_by_hour(data_df, request_data):
         include_lowest=True
     )
     delay_by_category = filtered_df.groupby('time_category')['delay_in_min'].mean()
-    max_category = delay_by_category.idxmax()
+    category_with_max_delays = delay_by_category.idxmax()
     max_value = int(round(delay_by_category.max(), 0))
     fig = go.Figure(data=[ 
         go.Bar(
@@ -197,4 +197,70 @@ def get_delay_by_hour(data_df, request_data):
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return max_category, max_value, graph_json
+    return category_with_max_delays, max_value, graph_json
+
+import plotly.graph_objects as go
+
+def get_alternative_trains_with_delays(data_df, request_data):
+    boarding = request_data['boarding_point']
+    deboarding = request_data['deboarding_point']
+    current_train = request_data['train_name']
+
+    # Filter for trains that stop at both stations
+    station_filter = data_df[data_df["station"].isin([boarding, deboarding])]
+    trains_with_both = (
+        station_filter.groupby("train_name")["station"]
+        .nunique()
+        .loc[lambda x: x == 2]
+        .index
+    )
+
+    alternative_trains = []
+    
+    for train in trains_with_both:
+        if train == current_train:
+            continue
+        if check_route_validity(data_df, train, boarding, deboarding):
+            delay_df = data_df[
+                (data_df['train_name'] == train) &
+                (data_df['station'].isin([boarding, deboarding]))
+            ]
+            avg_delay = delay_df['delay_in_min'].mean()
+            alternative_trains.append((train, round(avg_delay, 1)))
+
+    # Plotting
+    if not alternative_trains:
+        print("No alternative trains found.")
+        return None
+    alternative_trains = sorted(alternative_trains, key=lambda x: x[1])[:5]
+    least_delay_train = alternative_trains[0][0]
+    least_delay_value = alternative_trains[0][1]
+
+
+    train_names = [t[0] for t in alternative_trains]
+    delays = [t[1] for t in alternative_trains]
+
+    fig = go.Figure(
+        data=[
+            go.Table(
+                header=dict(
+                    values=["Alternative Trains", "Average Delay"],
+                    fill_color="lightgrey",
+                    align="left",
+                    line_color='black',
+                    ),
+                cells=dict(
+                    values=[
+                        [t[0] for t in alternative_trains],
+                        [t[1] for t in alternative_trains]
+                    ],
+                    fill_color="white",
+                    align="left",
+                    line_color='black',
+                )
+            )
+        ]
+    )
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return least_delay_train, least_delay_value,  graph_json
