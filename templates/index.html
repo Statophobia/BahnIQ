@@ -119,6 +119,9 @@
 														</li>
 													{% endif %}
 													<li>{{request_data.train_name}} was <b></b>on time for {{on_time_percentage}}%</b> of its journeys.</li>
+													<li>Avoid taking {{category_with_max_delays}} trains, as this has the highest average delay of {{max_value}} minutes.</li>
+													<li>For the same journey, you can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of only <b>{{ least_delay_value }} minutes</b>.
+													</li>
 												</ul>
 											</div>
 										</div>
@@ -156,6 +159,34 @@
 												<div id='punctuality_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Punctuality by hour : {{request_data.train_name}}</h2>
+												</header>
+												<p>This shows the delays of {{request_data.train_name}} by hour of a day.
+													{{category_with_max_delays}} has the highest delay.
+													The maximum average delay is {{max_delay}} minutes.
+												</p>
+											</div>
+											<div class="chart-container">
+												<div id='delay_by_hour_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
+										</div>
+										{% if alternative_trains_with_delays_json %}
+											<div class="spotlight">
+												<div class="content">
+													<header class="major">
+														<h2>Alternative trains with delays </h2>
+													</header>
+													<p>This shows the top 5 alternative trains with the least average delays compared to <b>{{request_data.train_name}}</b>.
+													</p>
+												</div>
+												<div class="chart-container">
+													<div id='alternative_train_delays'><!-- Plotly chart will be drawn inside this DIV --></div>
+												</div>
+											</div>
+										{% endif %}
 									</section>
 							</div>
 						{% endif %}
@@ -178,7 +209,17 @@
 
 					var punctuality_chart = JSON.parse(`{{ punctuality_chart_json | safe }}`);
 					Plotly.newPlot("punctuality_chart", punctuality_chart.data, punctuality_chart.layout, { responsive: true });
+
+					var delay_by_hour_chart = JSON.parse(`{{ delay_by_hour_chart_json | safe }}`);
+					Plotly.newPlot("delay_by_hour_chart", delay_by_hour_chart.data, delay_by_hour_chart.layout, { responsive: true });
+
 				</script>
+			{% endif %}
+			{% if alternative_trains_with_delays_json %}
+				<script>
+					var alternative_train_delays = JSON.parse(`{{ alternative_trains_with_delays_json | safe }}`);
+					Plotly.newPlot("alternative_train_delays", alternative_train_delays.data, alternative_train_delays.layout, { responsive: true });
+				</script>	
 			{% endif %}
 			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
 			<script src="{{ url_for('static', filename='assets/js/jquery.scrollex.min.js') }}"></script>
