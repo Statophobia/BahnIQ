@@ -119,8 +119,8 @@ def get_punctuality_chart(data_df, request_data):
         (data_df['train_name'] == request_data['train_name']) & 
         (data_df['station'] == request_data['deboarding_point'])
     ].copy()
-    end_date = pd.to_datetime('today')
-    start_date = end_date -  pd.DateOffset(months=3)
+    today = pd.Timestamp.today()    
+    start_date = today - pd.DateOffset(months=3)
     df_recent = filtered_df[
         (filtered_df['time'] >= start_date)
     ].copy()
@@ -166,7 +166,7 @@ def get_delay_by_hour(data_df, request_data):
     )
     delay_by_category = filtered_df.groupby('time_category')['delay_in_min'].mean()
     category_with_max_delays = delay_by_category.idxmax()
-    max_value = int(round(delay_by_category.max(), 0))
+    max_delay = int(round(delay_by_category.max(), 0))
     fig = go.Figure(data=[ 
         go.Bar(
             x=bins[:-1],  # Using the bin values as x (e.g., 0, 3, 7, 11, 15, 19)
@@ -197,7 +197,7 @@ def get_delay_by_hour(data_df, request_data):
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return category_with_max_delays, max_value, graph_json
+    return category_with_max_delays, max_delay, graph_json
 
 import plotly.graph_objects as go
 
@@ -230,15 +230,11 @@ def get_alternative_trains_with_delays(data_df, request_data):
 
     # Plotting
     if not alternative_trains:
-        print("No alternative trains found.")
-        return None
+        return None, None, None
+    
     alternative_trains = sorted(alternative_trains, key=lambda x: x[1])[:5]
     least_delay_train = alternative_trains[0][0]
     least_delay_value = alternative_trains[0][1]
-
-
-    train_names = [t[0] for t in alternative_trains]
-    delays = [t[1] for t in alternative_trains]
 
     fig = go.Figure(
         data=[
@@ -263,4 +259,4 @@ def get_alternative_trains_with_delays(data_df, request_data):
     )
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return least_delay_train, least_delay_value,  graph_json
+    return least_delay_train, least_delay_value, graph_json
