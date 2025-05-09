@@ -115,12 +115,16 @@
 													<li>The average delay of {{request_data.train_name}} to {{request_data.deboarding_point}} over the past three months is <b>{{short_and_long_term_delay_value.long_term_delay}} minutes</b>.</li>
 													{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
 														<li>
-															In the last two weeks, there is {{short_and_long_term_delay_value.short_term_delay}} delay.
+															In the last two weeks, there is {{short_and_long_term_delay_value.short_term_delay}} minutes delay.
 														</li>
 													{% endif %}
 													<li>{{request_data.train_name}} was <b></b>on time for {{on_time_percentage}}%</b> of its journeys.</li>
-													<li>Avoid taking {{category_with_max_delays}} trains, as this has the highest average delay of {{max_value}} minutes.</li>
+													<li>Avoid taking {{category_with_max_delays}} trains, as this has the highest average delay of {{max_delay}} minutes.</li>
 													<li>For the same journey, you can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of only <b>{{ least_delay_value }} minutes</b>.
+													</li>
+													<li>You don't need to rush to the station on <b>{{min_delay_day}}</b>, 
+														as trains have been relatively punctual on this day. 
+														Over the past 3 months, the average delay on {{min_delay_day}} was just {{min_delay_of_trains}} minutes.
 													</li>
 												</ul>
 											</div>
@@ -153,7 +157,7 @@
 												<header class="major">
 													<h2>Punctuality rate: {{request_data.train_name}}</h2>
 												</header>
-												<p>This shows that {{request_data.train_name}} was on time by {{on_time_percentage}}% over the last two weeks.</p>
+												<p>This shows that {{request_data.train_name}} was on time by {{on_time_percentage}}% over the last 3 months.</p>
 											</div>
 											<div class="chart-container">
 												<div id='punctuality_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
@@ -173,6 +177,7 @@
 												<div id='delay_by_hour_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
+										
 										{% if alternative_trains_with_delays_json %}
 											<div class="spotlight">
 												<div class="content">
@@ -187,6 +192,19 @@
 												</div>
 											</div>
 										{% endif %}
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Delay_by_day : {{request_data.train_name}}</h2>
+												</header>
+												<p>Based on data from the last three months, the train {{request_data.train_name}} experienced its highest delay of {{max_delay_of_trains}} minutes on {{max_delay_day}}.
+													On {{min_delay_day}}, it had the shortest delay of {{min_delay_of_trains}} minutes in the last 3 months.
+												</p>
+											</div>
+											<div class="chart-container">
+												<div id='delays_by_week'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
+										</div>
 									</section>
 							</div>
 						{% endif %}
@@ -212,7 +230,9 @@
 
 					var delay_by_hour_chart = JSON.parse(`{{ delay_by_hour_chart_json | safe }}`);
 					Plotly.newPlot("delay_by_hour_chart", delay_by_hour_chart.data, delay_by_hour_chart.layout, { responsive: true });
-
+ 
+					var delays_by_week = JSON.parse(`{{ get_delays_by_week_json | safe }}`);
+					Plotly.newPlot("delays_by_week", delays_by_week.data, delays_by_week.layout, { responsive: true });
 				</script>
 			{% endif %}
 			{% if alternative_trains_with_delays_json %}

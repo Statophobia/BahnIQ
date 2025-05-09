@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 
 from utils import get_data, get_delay_by_week_chart, check_route_validity, \
-    get_short_and_long_term_delay_value, get_punctuality_chart, get_delay_by_hour, get_alternative_trains_with_delays
+    get_short_and_long_term_delay_value, get_punctuality_chart, get_delay_by_hour, get_alternative_trains_with_delays, get_delays_by_week
 
 import subprocess
 
@@ -54,7 +54,7 @@ def stats():
     on_time_percentage, punctuality_chart_json = get_punctuality_chart(data_df, request_data)
     category_with_max_delays, max_delay,delay_by_hour_chart_json = get_delay_by_hour(data_df, request_data)
     least_delay_train, least_delay_value, alternative_trains_with_delays_json = get_alternative_trains_with_delays(data_df, request_data)
-
+    max_delay_of_trains, min_delay_of_trains, max_delay_day, min_delay_day, get_delays_by_week_json = get_delays_by_week(data_df, request_data)
     return render_template(
         'index.html', 
         dropdown_data=dropdown_data, 
@@ -68,6 +68,11 @@ def stats():
         alternative_trains_with_delays_json=alternative_trains_with_delays_json,
         least_delay_train=least_delay_train,
         least_delay_value=least_delay_value,
+        get_delays_by_week_json=get_delays_by_week_json,
+        max_delay_of_trains=max_delay_of_trains,
+        min_delay_of_trains=min_delay_of_trains,
+        max_delay_day=max_delay_day,
+        min_delay_day=min_delay_day,
         request_data=request_data, 
         message=None
     )
