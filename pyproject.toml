@@ -9,5 +9,10 @@ dependencies = [
     'pandas',
     'pyarrow', 
     'plotly', 
-    'gunicorn'
+    'gunicorn',
+    'duckdb',
+    'duckdb-engine',
+    'langchain',
+    'langchain-groq', 
+    'streamlit'
 ]
