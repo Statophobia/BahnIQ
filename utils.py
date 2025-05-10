@@ -82,7 +82,8 @@ def get_delay_by_week_chart(data_df, request_data):
         name='Avg Delay'
     ))
     fig.update_layout(
-        title='Average Delay by Week', xaxis_title='Week Start', yaxis_title='Avg Delay (min)',
+        #title='Average Delay by Week', 
+        xaxis_title='Week', yaxis_title='Avg Delay (min)',
         autosize=True,
         margin=dict(l=20, r=20, t=40, b=40)
     )
@@ -130,7 +131,7 @@ def get_punctuality_chart(data_df, request_data):
     on_time_percentage = round((counts.get('On time', 0) / total) * 100)
     labels = counts.index.tolist()
     values = counts.values.tolist()
-    colors = ['blue', 'orange']
+    colors = ['red', 'green']
     fig = go.Figure(data=[go.Pie(
         labels=labels,
         values=values,
@@ -138,7 +139,7 @@ def get_punctuality_chart(data_df, request_data):
         marker=dict(colors=colors)
     )])
     fig.update_layout(
-        title_text='Percentage of Train On Time in the Last 3 months', 
+        #title_text='Percentage of Train On Time in the Last 3 months', 
         autosize=True,
         margin=dict(l=20, r=20, t=40, b=40)
     )
@@ -182,7 +183,7 @@ def get_delay_by_hour(data_df, request_data):
     ])
 
     fig.update_layout(
-        title='Average Train Delay by Time of Day',
+        #title='Average Train Delay by Time of Day',
         xaxis_title='Hour',
         yaxis_title='Average Delay',
         xaxis=dict(
@@ -245,6 +246,7 @@ def get_alternative_trains_with_delays(data_df, request_data):
                     fill_color="lightgrey",
                     align="left",
                     line_color='black',
+                    height=40
                     ),
                 cells=dict(
                     values=[
@@ -254,6 +256,7 @@ def get_alternative_trains_with_delays(data_df, request_data):
                     fill_color="white",
                     align="left",
                     line_color='black',
+                    height=40
                 )
             )
         ]
@@ -281,8 +284,8 @@ def get_delays_by_week(data_df, request_data):
 
     max_delay_row = delays_by_day[delays_by_day['average_delay'] == max_delay].iloc[0]
     min_delay_row = delays_by_day[delays_by_day['average_delay'] == min_delay].iloc[0]
-    max_delay_of_trains = round(max_delay)
-    min_delay_of_trains = round(min_delay)
+    max_delay_of_train = round(max_delay)
+    min_delay_of_train = round(min_delay)
     max_delay_day = max_delay_row['day_of_week']
     min_delay_day = min_delay_row['day_of_week']
 
@@ -298,13 +301,14 @@ def get_delays_by_week(data_df, request_data):
         header=dict(
             values=[
                 "<b>Days</b>",
-                "<b>Avg Delay (Deboarding)</b>",
-                "<b>On-Time % (Deboarding)</b>",
-                "<b>Avg Delay (Station)</b>"
+                "<b>Avg. delay of train</b>",
+                "<b>Punctuality rate of train(%)</b>",
+                "<b>Avg. delay of all trains at deboarding station</b>"
             ],
             fill_color='lightskyblue',
             align='left',
-            font=dict(size=14, color='black')
+            font=dict(size=14, color='black'),
+            height=40
         ),
         cells=dict(
             values=[
@@ -315,17 +319,18 @@ def get_delays_by_week(data_df, request_data):
             ],
             fill_color='aliceblue',
             align='left',
-            font=dict(size=13)
+            font=dict(size=13),
+            height=40
         )
     )])
 
     fig.update_layout(
-        title="Delay Statistics by Day",
+        #title="Delay Statistics by Day",
         margin=dict(l=10, r=10, t=40, b=10)
     )
 
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return max_delay_of_trains, min_delay_of_trains, max_delay_day, min_delay_day, graph_json
+    return max_delay_of_train, min_delay_of_train, max_delay_day, min_delay_day, graph_json
 
   
