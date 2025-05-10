@@ -119,12 +119,10 @@
 														</li>
 													{% endif %}
 													<li>{{request_data.train_name}} was <b></b>on time for {{on_time_percentage}}%</b> of its journeys.</li>
-													<li>Avoid taking {{category_with_max_delays}} trains, as this has the highest average delay of {{max_delay}} minutes.</li>
+													<li>Trains arriving at {{request_data.deboarding_point}} during {{category_with_max_delays}} have had a maximum delay of {{max_delay}} minutes over the past three months.</li>
 													<li>For the same journey, you can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of only <b>{{ least_delay_value }} minutes</b>.
 													</li>
-													<li>You don't need to rush to the station on <b>{{min_delay_day}}</b>, 
-														as trains have been relatively punctual on this day. 
-														Over the past 3 months, the average delay on {{min_delay_day}} was just {{min_delay_of_trains}} minutes.
+													<li>Trains on {{min_delay_day}} have been efficient, with a minimum delay of {{min_delay_of_trains}} minute - making them the best performing day compared to the rest of the week over the past 3 months.
 													</li>
 												</ul>
 											</div>

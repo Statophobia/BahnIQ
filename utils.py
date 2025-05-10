@@ -235,7 +235,7 @@ def get_alternative_trains_with_delays(data_df, request_data):
     
     alternative_trains = sorted(alternative_trains, key=lambda x: x[1])[:5]
     least_delay_train = alternative_trains[0][0]
-    least_delay_value = alternative_trains[0][1]
+    least_delay_value = round(alternative_trains[0][1])
 
     fig = go.Figure(
         data=[
