@@ -112,19 +112,26 @@
 													<h2>TL;DR</h2>
 												</header>
 												<ul>
-													<li>The average delay of {{request_data.train_name}} to {{request_data.deboarding_point}} over the past three months is <b>{{short_and_long_term_delay_value.long_term_delay}} minutes</b>.</li>
-													{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
-														<li>
-															In the last two weeks, there is {{short_and_long_term_delay_value.short_term_delay}} minutes delay.
-														</li>
-													{% endif %}
-													<li>{{request_data.train_name}} was <b></b>on time for {{on_time_percentage}}%</b> of its journeys.</li>
-													<li>Trains arriving at {{request_data.deboarding_point}} during {{category_with_max_delays}} have had a maximum delay of {{max_delay}} minutes over the past three months.</li>
-													<li>For the same journey, you can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of only <b>{{ least_delay_value }} minutes</b>.
+													<li>{{request_data.train_name}} to {{request_data.deboarding_point}} has an average delay of 
+														<b>{{short_and_long_term_delay_value.long_term_delay}} minutes</b>.
+														{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
+															{% set delay_percentage_change = ((short_and_long_term_delay_value.short_term_delay/short_and_long_term_delay_value.long_term_delay)-1)*100 %}
+															{% if delay_percentage_change <= -20 %}
+																But in the last two weeks, the delay has been <b>decreased by {{delay_percentage_change|abs|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes</b>.
+															{% elif delay_percentage_change >= 20 %}
+																But in the last two weeks, the delay has been <b>increased by {{delay_percentage_change|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes</b>.
+															{% endif %}
+														{% endif %}
 													</li>
-													<li>Trains on {{min_delay_day}} have been efficient, with a minimum delay of {{min_delay_of_trains}} minute - making them the best performing day compared to the rest of the week over the past 3 months.
+													<li>{{request_data.train_name}} was <b>on time for {{on_time_percentage}}%</b> of its journeys — meaning within 6 minutes of the scheduled arrival time.</li>
+													<li>For the same journey, you can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of <b>{{ least_delay_value }} minutes</b>.</li>
+													<li>
+														{{request_data.train_name}} experiences its <b>highest delay</b> of {{max_delay_of_train}} minutes on <b>{{max_delay_day}}s</b> and
+														on <b>{{min_delay_day}}s</b>, it has the <b>shortest delay</b> of {{min_delay_of_train}} minutes.
 													</li>
+													<li>Incase, you plan to take some other train to {{request_data.deboarding_point}}, it's good to note that trains arriving during <b>{{category_with_max_delays}} experience the highest delay of {{max_delay}} minutes</b>.</li>
 												</ul>
+												<i><b>Note:</b> All charts are based on last 90 days of data, unless specified explicitly.</i>
 											</div>
 										</div>
 									</section>
@@ -136,12 +143,16 @@
 													<h2>Delay time: {{request_data.train_name}}</h2>
 												</header>
 												<p>
-													The average delay of {{ request_data.train_name }} to 
-													{{ request_data.deboarding_point }} for the last three months is 
-													{{ short_and_long_term_delay_value.long_term_delay }} minutes.<br><br>
-													The average delay of {{ request_data.train_name }} to 
-													{{ request_data.deboarding_point }} for the last two weeks is 
-													{{ short_and_long_term_delay_value.short_term_delay }} minutes
+													{{request_data.train_name}} to {{request_data.deboarding_point}} has an average delay of 
+													<b>{{short_and_long_term_delay_value.long_term_delay}} minutes</b>.
+													{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
+														{% set delay_percentage_change = ((short_and_long_term_delay_value.short_term_delay/short_and_long_term_delay_value.long_term_delay)-1)*100 %}
+														{% if delay_percentage_change <= -20 %}
+															But in the last two weeks, the delay has been <b>decreased by {{delay_percentage_change|abs}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes></b>.
+														{% elif delay_percentage_change >= 20 %}
+															But in the last two weeks, the delay has been <b>increased by {{delay_percentage_change}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes></b>.
+														{% endif %}
+													{% endif %}
 												</p>
 											</div>
 											<div class="chart-container">
@@ -155,24 +166,11 @@
 												<header class="major">
 													<h2>Punctuality rate: {{request_data.train_name}}</h2>
 												</header>
-												<p>This shows that {{request_data.train_name}} was on time by {{on_time_percentage}}% over the last 3 months.</p>
+												<p>{{request_data.train_name}} was <b>on time for {{on_time_percentage}}%</b> of its journeys — meaning within 6 minutes of the scheduled arrival time.
+													</p>
 											</div>
 											<div class="chart-container">
 												<div id='punctuality_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
-											</div>
-										</div>
-										<div class="spotlight">
-											<div class="content">
-												<header class="major">
-													<h2>Punctuality by hour : {{request_data.train_name}}</h2>
-												</header>
-												<p>This shows the delays of {{request_data.train_name}} by hour of a day.
-													{{category_with_max_delays}} has the highest delay.
-													The maximum average delay is {{max_delay}} minutes.
-												</p>
-											</div>
-											<div class="chart-container">
-												<div id='delay_by_hour_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
 										
@@ -180,9 +178,11 @@
 											<div class="spotlight">
 												<div class="content">
 													<header class="major">
-														<h2>Alternative trains with delays </h2>
+														<h2>Alternative trains for {{request_data.train_name}}</h2>
 													</header>
-													<p>This shows the top 5 alternative trains with the least average delays compared to <b>{{request_data.train_name}}</b>.
+													<p>
+														The table shows the <b>top 5 alternative trains</b> with the least average delays compared to <b>{{request_data.train_name}}</b>.
+														You can consider taking <b>{{ least_delay_train }}</b>, which is more efficient with an average delay of <b>{{ least_delay_value }} minutes</b>.
 													</p>
 												</div>
 												<div class="chart-container">
@@ -190,17 +190,33 @@
 												</div>
 											</div>
 										{% endif %}
+
 										<div class="spotlight">
 											<div class="content">
 												<header class="major">
-													<h2>Delay_by_day : {{request_data.train_name}}</h2>
+													<h2>Delay by day of week: {{request_data.train_name}}</h2>
 												</header>
-												<p>Based on data from the last three months, the train {{request_data.train_name}} experienced its highest delay of {{max_delay_of_trains}} minutes on {{max_delay_day}}.
-													On {{min_delay_day}}, it had the shortest delay of {{min_delay_of_trains}} minutes in the last 3 months.
+												<p>{{request_data.train_name}} experiences its <b>highest delay</b> of {{max_delay_of_trains}} minutes on <b>{{max_delay_day}}s</b> and
+													on <b>{{min_delay_day}}s</b>, it has the <b>shortest delay</b> of {{min_delay_of_trains}} minutes.
 												</p>
 											</div>
 											<div class="chart-container">
 												<div id='delays_by_week'><!-- Plotly chart will be drawn inside this DIV --></div>
+											</div>
+										</div>
+
+										<div class="spotlight">
+											<div class="content">
+												<header class="major">
+													<h2>Delay by hour: {{request_data.deboarding_point}}</h2>
+												</header>
+												<p>
+													The chart shows the delays of trains arriving at {{request_data.deboarding_point}} by hour of a day.
+													Trains arriving at {{request_data.deboarding_point}} during <b>{{category_with_max_delays}} experience the highest delay of {{max_delay}} minutes</b>.
+												</p>
+											</div>
+											<div class="chart-container">
+												<div id='delay_by_hour_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
 									</section>
