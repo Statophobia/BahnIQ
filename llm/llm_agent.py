@@ -4,8 +4,11 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.sql_database import SQLDatabase
 
 import os
+from dotenv import load_dotenv
 
 from pathlib import Path
+
+load_dotenv()
 
 db_path = Path('data')/'db_data.db'
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
@@ -15,7 +18,9 @@ def get_sql_agent():
 
     llm = ChatGroq(
         model_name="gemma2-9b-it",
-        api_key=GROQ_API_KEY
+        #model_name='llama3-8b-8192',
+        api_key=GROQ_API_KEY,
+        temperature=0.0
     )
 
     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
@@ -28,7 +33,3 @@ def get_sql_agent():
         time_limit=60
     )
     return agent
-
-agent = get_sql_agent()  # Call inside block
-answer = agent.invoke('what\'s the average delay for ice 71?')
-print(answer)
