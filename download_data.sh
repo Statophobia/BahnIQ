@@ -1,5 +1,7 @@
 #!/bin/bash
-     
+cd ~/app || exit
+source venv/bin/activate
+
 # Create a data directory
 mkdir -p data
 
