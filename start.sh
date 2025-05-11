@@ -2,6 +2,8 @@
 chmod +x download_data.sh
 ./download_data.sh
 
+cd ~/app || exit
+
 # Activate virtual environment (or create if not exist)
 if [ ! -d "venv" ]; then
     python3 -m venv venv
