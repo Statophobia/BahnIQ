@@ -1,19 +1,18 @@
-name: Deploy to Server
+name: PR Check
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  deploy:
-    name: Redeploy on Merge
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
+    # Replace the below with pytest
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
