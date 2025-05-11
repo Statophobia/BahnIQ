@@ -17,6 +17,7 @@ jobs:
         key: ${{ secrets.HETZNER_SSH_KEY }}
         script: |
           cd ~/app
-          git pull --rebase origin main
+          git fetch origin
+          git reset --hard origin/main
           chmod +x download_data.sh
           ./download_data.sh >> download_data.log 2>&1

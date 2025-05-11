@@ -29,6 +29,7 @@ jobs:
               fi
   
               cd ~/app
-              git pull --rebase origin main
+              git fetch origin
+              git reset --hard origin/main
               chmod +x start.sh
               ./start.sh
