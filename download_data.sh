@@ -10,3 +10,7 @@ echo "Downloading $url"
 curl -L "$url" -o "$output_file"
 
 echo "Download complete"
+
+python llm/load_data.py
+
+echo "Data loaded into DuckDB"
