@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 
+import subprocess
+
 from utils import get_data, get_delay_by_week_chart, check_route_validity, \
     get_short_and_long_term_delay_value, get_punctuality_chart, get_delay_by_hour, get_alternative_trains_with_delays, get_delays_by_week
 
-import subprocess
+from llm.llm_agent import get_sql_agent
 
 app = Flask(__name__)
 
 data_df, stations, train_names = get_data()
+
+agent = get_sql_agent()
 
 @app.route('/')
 def index():
@@ -89,6 +93,14 @@ def get_dropdown_data():
         filtered_data = data_df[(data_df['station'] == current_dropdown_selection)]['train_name'].unique().tolist()
 
     return jsonify({'dropdown_data': filtered_data})
+
+@app.route('/ask', methods=['POST'])
+def ask():
+    question = request.json.get('question')
+
+    answer = agent.invoke(question)
+
+    return jsonify({'answer': answer})
 
 
 @app.route("/refresh")

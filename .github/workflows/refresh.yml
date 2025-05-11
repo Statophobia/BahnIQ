@@ -1,0 +1,22 @@
+name: Refresh Data
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Refresh via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HETZNER_HOST }}
+        username: ${{ secrets.HETZNER_USER }}
+        key: ${{ secrets.HETZNER_SSH_KEY }}
+        script: |
+          cd ~/app
+          git pull origin main
+          chmod +x download_data.sh
+          ./download_data.sh >> download_data.log 2>&1

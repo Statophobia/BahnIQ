@@ -219,6 +219,17 @@
 												<div id='delay_by_hour_chart'><!-- Plotly chart will be drawn inside this DIV --></div>
 											</div>
 										</div>
+
+										<div class="container">
+											<h2>Ask BahnIQ About Train Delays</h2>
+											<textarea id="question" placeholder="e.g. What's the average delay for ICE 71?"></textarea>
+											<br>
+											<span id="button">
+												<button id="askBtn" type="submit" class="cssbuttons-io"><span>Ask</span></button>
+											</span>
+											<div class="cooldown" id="cooldown"></div>
+											<div class="answer" id="answer"></div>
+										</div>
 									</section>
 							</div>
 						{% endif %}
@@ -263,7 +274,7 @@
 			<script src="{{ url_for('static', filename='assets/js/util.js') }}"></script>
 			<script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
 			<script src="{{ url_for('static', filename='assets/js/dropdown.js') }}"></script>
-			<!-- <script src="{{ url_for('static', filename='assets/js/analysis.js') }}"></script> -->
+			<script src="{{ url_for('static', filename='assets/js/chatbot.js') }}"></script>
 
 	</body>
 </html>

@@ -201,8 +201,6 @@ def get_delay_by_hour(data_df, request_data):
 
     return category_with_max_delays, max_delay, graph_json
 
-import plotly.graph_objects as go
-
 def get_alternative_trains_with_delays(data_df, request_data):
     boarding = request_data['boarding_point']
     deboarding = request_data['deboarding_point']

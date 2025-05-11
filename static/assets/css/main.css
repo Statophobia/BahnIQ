@@ -4170,3 +4170,16 @@ nav li#button {
 #summary h2:after {
 	margin: 0.7em auto 1em auto;
 }
+
+#askBtn::before {
+	color: white !important;
+}
+
+.cooldown {
+	color: red;
+	margin-top: 0.5em;
+}
+.answer {
+	margin-top: 1em;
+	font-weight: bold;
+}
