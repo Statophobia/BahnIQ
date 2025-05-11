@@ -23,6 +23,7 @@ jobs:
             script: |
               sudo apt-get update -y
               sudo apt-get install -y git
+              sudo apt install -y python3 python3-pip
   
               if [ ! -d "$HOME/app" ]; then
                   git clone https://github.com/Statophobia/BahnIQ.git ~/app
@@ -30,5 +31,6 @@ jobs:
   
               cd ~/app
               git pull origin main
+              pip3 install -r requirements.txt
               chmod +x start.sh
               ./start.sh
