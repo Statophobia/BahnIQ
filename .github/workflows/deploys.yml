@@ -21,17 +21,14 @@ jobs:
             username: ${{ vars.HETZNER_USER }}
             key: ${{ secrets.HETZNER_SSH_KEY }}
             script: |
-              sudo apt-get update -y
-              sudo apt-get install -y git
-              sudo apt-get install python3-venv -y
   
-              if [ ! -d "$HOME/app" ]; then
-                  git clone https://github.com/Statophobia/BahnIQ.git ~/app
+              if [ ! -d "$HOME/bahniq" ]; then
+                  git clone https://github.com/Statophobia/BahnIQ.git ~/bahniq
               fi
   
-              cd ~/app
+              cd ~/bahniq
               git fetch origin
               git reset --hard origin/main
               echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
-              chmod +x start.sh
-              ./start.sh
+              chmod +x deploy.sh
+              ./deploy.sh

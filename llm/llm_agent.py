@@ -18,7 +18,6 @@ def get_sql_agent():
 
     llm = ChatGroq(
         model_name="gemma2-9b-it",
-        #model_name='llama3-8b-8192',
         api_key=GROQ_API_KEY,
         temperature=0.0
     )
