@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Activate virtual environment (or create if not exist)
 if [ ! -d "venv" ]; then
     python3 -m venv venv
@@ -9,7 +10,11 @@ source venv/bin/activate
 # Install dependencies inside venv
 pip3 install -r requirements.txt
 
-chmod +x download_data.sh
-./download_data.sh
+chmod +x refresh_data.sh
+./refresh_data.sh
 
-gunicorn --bind 0.0.0.0:10000 app:app
+# Restart systemd service
+echo "Restarting systemd service..."
+sudo systemctl restart bahniq
+
+echo "✅ Deployment complete."

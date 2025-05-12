@@ -16,8 +16,8 @@ jobs:
         username: ${{ secrets.HETZNER_USER }}
         key: ${{ secrets.HETZNER_SSH_KEY }}
         script: |
-          cd ~/app
+          cd ~/bahniq
           git fetch origin
           git reset --hard origin/main
-          chmod +x download_data.sh
-          ./download_data.sh >> download_data.log 2>&1
+          chmod +x refresh_data.sh
+          ./refresh_data.sh >> refresh_data.log 2>&1
