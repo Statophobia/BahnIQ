@@ -12,8 +12,8 @@ jobs:
     - name: Refresh via SSH
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.HETZNER_HOST }}
-        username: ${{ secrets.HETZNER_USER }}
+        host: ${{ vars.HETZNER_HOST }}
+        username: ${{ vars.HETZNER_USER }}
         key: ${{ secrets.HETZNER_SSH_KEY }}
         script: |
           cd ~/bahniq
