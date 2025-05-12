@@ -32,5 +32,6 @@ jobs:
               cd ~/app
               git fetch origin
               git reset --hard origin/main
+              echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
               chmod +x start.sh
               ./start.sh
