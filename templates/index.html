@@ -148,9 +148,9 @@
 													{% if short_and_long_term_delay_value.short_term_delay >= 0 %}
 														{% set delay_percentage_change = ((short_and_long_term_delay_value.short_term_delay/short_and_long_term_delay_value.long_term_delay)-1)*100 %}
 														{% if delay_percentage_change <= -20 %}
-															But in the last two weeks, the delay has been <b>decreased by {{delay_percentage_change|abs|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes></b>.
+															But in the last two weeks, the delay has been <b>decreased by {{delay_percentage_change|abs|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes</b>.
 														{% elif delay_percentage_change >= 20 %}
-															But in the last two weeks, the delay has been <b>increased by {{delay_percentage_change|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes></b>.
+															But in the last two weeks, the delay has been <b>increased by {{delay_percentage_change|round|int}}% to {{short_and_long_term_delay_value.short_term_delay}} minutes</b>.
 														{% endif %}
 													{% endif %}
 												</p>
