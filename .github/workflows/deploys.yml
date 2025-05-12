@@ -23,7 +23,7 @@ jobs:
             script: |
               sudo apt-get update -y
               sudo apt-get install -y git
-              sudo apt-get install python3-venv
+              sudo apt-get install python3-venv -y
   
               if [ ! -d "$HOME/app" ]; then
                   git clone https://github.com/Statophobia/BahnIQ.git ~/app

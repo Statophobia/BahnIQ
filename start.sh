@@ -1,6 +1,4 @@
 #!/bin/bash
-cd ~/app || exit
-
 # Activate virtual environment (or create if not exist)
 if [ ! -d "venv" ]; then
     python3 -m venv venv
