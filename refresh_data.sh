@@ -15,3 +15,9 @@ echo "Download complete"
 python3 llm/load_data.py
 
 echo "Data loaded into DuckDB"
+
+# Restart the application service to load the fresh data into memory
+echo "Restarting systemd service..."
+sudo systemctl restart bahniq
+
+echo "✅ Service restarted"
