@@ -13,8 +13,4 @@ pip3 install -r requirements.txt
 chmod +x refresh_data.sh
 ./refresh_data.sh
 
-# Restart systemd service
-echo "Restarting systemd service..."
-sudo systemctl restart bahniq
-
 echo "✅ Deployment complete."
